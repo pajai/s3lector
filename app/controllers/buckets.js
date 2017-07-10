@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
     S3Object = mongoose.model('S3Object'),
     util = require('./util'),
     AWS = require('aws-sdk'),
+    config = require('../../config/config'),
     _ = require('lodash');
 
 
@@ -156,7 +157,7 @@ exports.fill = function(req, res) {
 	var bucket = req.bucket;
    console.log('fill bucket: %s',bucket.name);
 	// Set your region for future requests.
-	AWS.config.update({ accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, sslEnabled:true });
+	AWS.config.update({ endpoint: config.s3_endpoint, accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, sslEnabled:true });
 	var s3 = new AWS.S3();
   var params = { Bucket: bucket.name };
   if (bucket.prefix) {
