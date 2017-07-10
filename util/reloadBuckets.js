@@ -86,7 +86,7 @@ function fillBucket(bkt,err) {
 	var bucket = bkt;
    console.log('fill bucket: %s',bucket.name);
 	// Set your region for future requests.
-	AWS.config.update({ accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, sslEnabled:true });
+	AWS.config.update({ endpoint: config.s3_endpoint, accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, s3BucketEndpoint: config.s3_bucket_endpoint, sslEnabled:true });
 	var s3 = new AWS.S3();
   var params = { Bucket: bucket.name };
   if (bucket.prefix) {

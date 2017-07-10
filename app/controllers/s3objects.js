@@ -120,7 +120,7 @@ exports.getObject = function(req, res) {
 	console.log('getObject s3object.bucket._id: %s',s3object.bucket._id);
 	console.log('getObject bucket._id: %s',bucket._id);
 
-  AWS.config.update({ endpoint: config.s3_endpoint,  accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, sslEnabled:true }); 
+  AWS.config.update({ endpoint: config.s3_endpoint,  accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, s3BucketEndpoint: config.s3_bucket_endpoint, sslEnabled:true }); 
   var s3 = new AWS.S3();
   var params = { Bucket: s3object.bucket.name, Key: s3object.uri, Expires: 60 };
 
