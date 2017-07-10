@@ -155,14 +155,14 @@ function bytesToSize(bytes) {
 
 exports.fill = function(req, res) {
 	var bucket = req.bucket;
-   console.log('fill bucket: %s',bucket.name);
+    console.log('fill bucket: %s',bucket.name);
 	// Set your region for future requests.
 	AWS.config.update({ endpoint: config.s3_endpoint, accessKeyId: bucket.accessKeyId, secretAccessKey: bucket.secretAccessKey, region: bucket.region, s3BucketEndpoint: config.s3_bucket_endpoint, sslEnabled:true });
 	var s3 = new AWS.S3();
-  var params = { Bucket: bucket.name };
-  if (bucket.prefix) {
-    params.Prefix = bucket.prefix;
-  }
+    var params = { Bucket: bucket.name };
+    if (bucket.prefix) {
+        params.Prefix = bucket.prefix;
+    }
 	s3.listObjects(params, function(err,resp) {
 		/*jshint loopfunc: true */
 		if (err) {
@@ -171,58 +171,57 @@ exports.fill = function(req, res) {
 		}
 		else {
 
-      // we have a valid response - kill current objects for this bucket
-      console.log('fill dropping objects for bucket: %s',bucket.name);
-      S3Object.dropByBucket(bucket._id, function(err, bucket) {
-        if (err) {
-            util.log(req.user, "DEL ERR deleting objects of bucket " + bucket.name + " failed: " + err);
-            res.render('error', {
-                status: 500,
-								message: 'could not drop bucket objects: ' + bucket.name,
-								error: err
-            });
-				}
-      }); 
+            // we have a valid response - kill current objects for this bucket
+            console.log('fill dropping objects for bucket: %s',bucket.name);
+            S3Object.dropByBucket(bucket._id, function(err, bucket) {
+                if (err) {
+                    util.log(req.user, "DEL ERR deleting objects of bucket " + bucket.name + " failed: " + err);
+                    res.render('error', {
+                        status: 500,
+                                        message: 'could not drop bucket objects: ' + bucket.name,
+                                        error: err
+                    });
+                }
+            }); 
 
-			// pick only what we need out of the response
-			var m = 0;
-			var n = resp.Contents.length;
-			var files = [];
+            // pick only what we need out of the response
+            var m = 0;
+            var n = resp.Contents.length;
+            var files = [];
 
-			for (var i = 0; i < n; i++) {
-				// the S3 file is not a directory
-				if (resp.Contents[i].Size) {
-					files[m] = new S3File(resp.Contents[i],bucket);
-					var s3obj = new S3Object(files[m]);
-//					console.log('object: %s',s3obj);
-					s3obj.save(function(err) {
-						if (err) {
-							console.log('s3obj save error: %s',err);
-							res.render('error', {
-								status: 500,
-								message: 'could not save object: ' + err,
-								error: err
-							});
-						} 
-					}); 
-					m++;
-				}
-			}
-      var bdate = new Date();
-			bucket.numObjects = m;
-			bucket.lastImport = bdate;
-			bucket.save(function(err) {
-			if (err) {
-						console.log('bucket save error: %s',err);
-						res.render('error', {
-							status: 500,
-							message: 'could not save bucket: ' + err,
-							error: err
-						});
-					} 
-			}); 
-			res.jsonp(bucket);
-      util.log(req.user, "FILL OK bucket " + bucket.name + " filled");
+            for (var i = 0; i < n; i++) {
+                // the S3 file is not a directory
+                if (resp.Contents[i].Size) {
+                    files[m] = new S3File(resp.Contents[i],bucket);
+                    var s3obj = new S3Object(files[m]);
+                    s3obj.save(function(err) {
+                        if (err) {
+                            console.log('s3obj save error: %s',err);
+                            res.render('error', {
+                                status: 500,
+                                message: 'could not save object: ' + err,
+                                error: err
+                            });
+                        } 
+                    }); 
+                    m++;
+                }
+            }
+            var bdate = new Date();
+            bucket.numObjects = m;
+            bucket.lastImport = bdate;
+            bucket.save(function(err) {
+            if (err) {
+                        console.log('bucket save error: %s',err);
+                        res.render('error', {
+                            status: 500,
+                            message: 'could not save bucket: ' + err,
+                            error: err
+                        });
+                    } 
+            }); 
+            res.jsonp(bucket);
+            util.log(req.user, "FILL OK bucket " + bucket.name + " filled");
 		}
 	});
 };
