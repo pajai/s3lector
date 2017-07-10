@@ -56,7 +56,7 @@ Any configured bucket is set as public by default - authenticated users can view
 
   Create an admin user in the database using the mongo script
 
-    cd config
+    cd util
     mongo <db name> ./mkAdmin.js
 
   Start the server:
