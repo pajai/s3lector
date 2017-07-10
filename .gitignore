@@ -5,3 +5,4 @@ node_modules/
 test/coverage/
 config/env/development.js
 *.bak
+minio-drive
